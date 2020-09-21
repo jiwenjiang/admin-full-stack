@@ -9,6 +9,7 @@ const app = express();
 app.use(express.json({ extended: true }));
 
 app.use("/api/auth", require("./routes/auth"));
+app.use("/api/todo", require("./routes/todo"));
 
 const start = async () => {
   try {
@@ -16,6 +17,7 @@ const start = async () => {
       useNewUrlParser: true,
       useUnifiedTopology: true,
       useCreateIndex: true,
+      useFindAndModify: false,
     });
 
     app.listen(PORT, () =>
