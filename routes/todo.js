@@ -56,9 +56,33 @@ router.post("/update", auth, async (req, res) => {
   }
 });
 
+router.post("/doneAll", auth, async (req, res) => {
+  try {
+    await Promise.all(
+      req.body.map((todo) => Todo.findByIdAndUpdate(todo._id, { done: true }))
+    );
+
+    res.status(201).json({ message: "Successfully updated" });
+  } catch (e) {
+    res.status(500).json({ message: "Something went wrong" });
+  }
+});
+
+router.post("/removeAllDone", auth, async (req, res) => {
+  try {
+    await Promise.all(req.body.map((todo) => Todo.findByIdAndRemove(todo._id)));
+
+    res.status(201).json({ message: "Successfully updated" });
+  } catch (e) {
+    res.status(500).json({ message: "Something went wrong" });
+  }
+});
+
 router.get("/", auth, async (req, res) => {
   try {
-    const todos = await Todo.find({ user: req.user.userId });
+    const todos = await Todo.find({ user: req.user.userId }).sort({
+      createdAt: -1,
+    });
     res.json(todos);
   } catch (e) {
     res.status(500).json({ message: "Something went wrong" });
