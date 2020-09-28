@@ -7,7 +7,7 @@ router.post("/create", auth, async (req, res) => {
   try {
     const { title } = req.body;
 
-    if (!title && !title.trim()) {
+    if (!title.trim()) {
       return res.status(400).json({ message: "Field is empty" });
     }
 

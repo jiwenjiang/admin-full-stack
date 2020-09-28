@@ -10,6 +10,7 @@ app.use(express.json({ extended: true }));
 
 app.use("/api/auth", require("./routes/auth"));
 app.use("/api/todo", require("./routes/todo"));
+app.use("/api/post", require("./routes/post"));
 
 const start = async () => {
   try {
