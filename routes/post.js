@@ -25,4 +25,15 @@ router.post("/create", auth, async (req, res) => {
   }
 });
 
+router.get("/", auth, async (req, res) => {
+  try {
+    const posts = await Post.find().sort({
+      createdAt: -1,
+    });
+    console.log({ posts });
+  } catch (e) {
+    res.status(500).json({ message: "Something went wrong" });
+  }
+});
+
 module.exports = router;
