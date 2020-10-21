@@ -6,9 +6,9 @@ const config = require("config");
 const { check, validationResult } = require("express-validator");
 const router = Router();
 
-// /api/auth/signup
+// /api/auth/regist
 router.post(
-  "/signup",
+  "/regist",
 
   [
     check("email", "Wrong email").isEmail(),
@@ -85,7 +85,7 @@ router.post(
         expiresIn: "1h",
       });
 
-      res.json({ token, userId: user.id });
+      res.json({ data: { token, userId: user.id }, code: 200, success: true });
     } catch (e) {
       res.status(500).json({ message: "Something went wrong " });
     }
