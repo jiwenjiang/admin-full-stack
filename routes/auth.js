@@ -10,37 +10,38 @@ const router = Router();
 router.post(
   "/regist",
 
-  [
-    check("email", "Wrong email").isEmail(),
-    check("password", "Wrong password").isLength({ min: 6 }),
-  ],
+  [check("password", "Wrong password").isLength({ min: 6 })],
 
   async (req, res) => {
     try {
       const error = validationResult(req);
 
       if (!error.isEmpty()) {
-        return res.status(400).json({
+        return res.status(200).json({
           errors: error.array(),
-          message: "Wrong data for register",
+          message: "参数错误",
+          status: 400,
+          data: null,
         });
       }
 
-      const { email, password } = req.body;
+      const { userName, password } = req.body;
 
-      const candidate = await User.findOne({ email });
+      const candidate = await User.findOne({ userName });
 
       if (candidate) {
-        return res.status(400).json({ message: "Such user already exists" });
+        return res
+          .status(200)
+          .json({ message: "用户已存在", status: 400, data: null });
       }
 
       const hashedPassword = await bcrypt.hash(password, 12);
 
-      const user = new User({ email, password: hashedPassword });
+      const user = new User({ ...req.body, password: hashedPassword });
 
       await user.save();
 
-      res.status(201).json({ message: "User successfully created" });
+      res.status(200).json({ message: "注册成功", status: 200, data: null });
     } catch (e) {
       res.status(500).json({ message: "Something went wrong " });
     }
