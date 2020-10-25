@@ -1,8 +1,10 @@
 const { Router } = require("express");
 const User = require("../models/user");
+const Doctor = require("../models/doctor");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const config = require("config");
+const { userTypeEnum } = require("../const");
 const { check, validationResult } = require("express-validator");
 const router = Router();
 
@@ -38,12 +40,17 @@ router.post(
       const hashedPassword = await bcrypt.hash(password, 12);
 
       const user = new User({ ...req.body, password: hashedPassword });
-
+      console.log("us", user, req.body);
       await user.save();
+      if (req.body.type === userTypeEnum.DOCTOR) {
+        const doctor = new Doctor({ userId: user._id, ...req.body.doctor });
+        console.log("dc", doctor);
+        await doctor.save();
+      }
 
       res.status(200).json({ message: "注册成功", status: 200, data: null });
     } catch (e) {
-      res.status(500).json({ message: "Something went wrong " });
+      res.status(500).json({ message: e });
     }
   }
 );

@@ -1,8 +1,7 @@
-import { doctorEnum } from "../const";
-const { Schema, model, Types } = require("mongoose");
-
+const { doctorEnum } = require("../const");
+const { Schema, model } = require("mongoose");
 const schema = new Schema({
-  userId: { type: Schema.Types, ref: "user" },
+  userId: { type: Schema.Types.ObjectId, ref: "user" },
   hospital: { type: String },
   disease: { type: String },
   type: {

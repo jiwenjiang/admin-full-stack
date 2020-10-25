@@ -14,7 +14,7 @@ const userTypeEnum = {
 const doctorEnum = {
   CLINICAL: 0, // 临床
   THERAPEUTIST: 1, // 治疗师
-  OTHER: 1, // 治疗师
+  OTHER: 2, // 治疗师
   PT: 11, // 物理治疗师
   OT: 12, // 作业治疗师
 };

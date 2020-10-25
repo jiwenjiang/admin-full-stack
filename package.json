@@ -15,7 +15,7 @@
     "react",
     "node"
   ],
-  "author": "Hovhannes Boyakhchyan <boyakhchyan1010@gmail.com>",
+  "author": "j_bleach<513755565@qq.com>",
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.0.0",
