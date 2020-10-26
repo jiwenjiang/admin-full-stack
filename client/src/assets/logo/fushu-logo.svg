@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="300px" height="401px" viewBox="-100 -100 800 901" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 59 (86127) - https://sketch.com -->
+    <title>编组 15</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-1">
+            <stop stop-color="#FF893C" offset="0%"></stop>
+            <stop stop-color="#FF893C" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="50%" y1="0.29296875%" x2="50%" y2="98.3230275%" id="linearGradient-2">
+            <stop stop-color="#FF8B3D" offset="0%"></stop>
+            <stop stop-color="#FF5B32" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="画板" transform="translate(-227.000000, -3828.000000)">
+            <g id="编组-6备份" transform="translate(136.000000, 3776.000000)">
+                <g id="编组-15" transform="translate(91.000000, 52.000000)">
+                    <circle id="椭圆形备份-14" fill="#F89C34" cx="250" cy="50" r="50"></circle>
+                    <rect id="矩形备份-12" fill="#F89C34" x="200" y="102" width="100" height="299" rx="50"></rect>
+                    <rect id="矩形备份-13" fill="url(#linearGradient-1)" opacity="0.679175967" x="0" y="0" width="100" height="400" rx="50"></rect>
+                    <path d="M250,102 C277.614237,102 300,124.385763 300,152 C300,179.614237 277.614237,202 250,202 C249.979965,202 249.959934,201.999988 249.939905,201.999965 L247.519476,202.020096 C165.820858,203.344714 100,269.985715 100,352 C99.456976,379.153211 77.2797835,401 50,401 C22.7202165,401 0.543024039,379.153211 0.00982095896,352.001031 L-9.9475983e-14,352 L0.004,351.524 L0,351 C0,350.547247 0.00601766721,350.0959 0.0179773823,349.646034 L-9.9475983e-14,352 C-9.9475983e-14,214.216711 111.462524,102.466889 249.136648,102.001459 C249.424156,102.002438 249.711793,102 250,102 L249.978959,102.000001 L249.978959,102.000001 Z" id="形状结合备份" fill="url(#linearGradient-2)"></path>
+                    <circle id="椭圆形备份-15" fill="#FF833B" cx="50" cy="50" r="50"></circle>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

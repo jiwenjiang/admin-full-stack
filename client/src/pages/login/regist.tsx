@@ -1,0 +1,202 @@
+import React, { FC, useState } from 'react'
+import { Button, Col, DatePicker, Divider, Form, Input, Radio, Row, Select } from 'antd'
+import './index.less'
+import { useNavigate } from 'react-router-dom'
+import { apiRegist } from '~/api/user.api'
+import { userEnum } from '~/interface/user/login'
+import UserEnum from '../../../../const/index'
+
+const { doctorEnum } = UserEnum
+
+const formItemLayout = {
+  labelCol: { span: 8 },
+  wrapperCol: { span: 16 }
+}
+
+const formItemLayoutItem = {
+  labelCol: { span: 4 },
+  wrapperCol: { span: 20 }
+}
+
+const RegistPage: FC = () => {
+  const navigate = useNavigate()
+  const [userType, setUserType] = useState<userEnum | null>(null)
+
+  const onFinished = async (form: any) => {
+    const params = { ...form, birth: form.birth?.valueOf() }
+    console.log('a', params)
+    const res = await apiRegist(params)
+  }
+
+  const changeType = (e: any) => {
+    console.log('e', e)
+    setUserType(e)
+  }
+
+  return (
+    <div className="regist-page">
+      <div className="head">
+        <span>复数科技</span>
+        <Divider type="vertical" />
+        <span>用户注册</span>
+      </div>
+      <div className="body">
+        <div className="regist-form">
+          <Form {...formItemLayout} onFinish={onFinished} className="regist-page-form" prefix=":" layout="horizontal">
+            <Row>
+              <Col span={8}>
+                <Form.Item name="userName" label="用户名" rules={[{ required: true, message: '请输入用户名' }]}>
+                  <Input placeholder="用户名" style={{ width: '200px' }} />
+                </Form.Item>
+              </Col>
+              <Col span={8}>
+                <Form.Item name="password" label="密码" rules={[{ required: true, message: '请输入密码' }]}>
+                  <Input placeholder="密码" type="password" style={{ width: '200px' }} />
+                </Form.Item>
+              </Col>
+              <Col span={8}>
+                <Form.Item
+                  name="passwordAgain"
+                  label="确认密码"
+                  rules={[
+                    { required: true, message: '请确认密码' },
+                    ({ getFieldValue }) => ({
+                      validator(rule, value) {
+                        if (!value || getFieldValue('password') === value) {
+                          return Promise.resolve()
+                        }
+                        return Promise.reject('两次密码不一致')
+                      }
+                    })
+                  ]}
+                >
+                  <Input placeholder="确认密码" style={{ width: '200px' }} />
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row>
+              <Col span={8}>
+                <Form.Item name="realName" label="姓名" rules={[{ required: true, message: '请输入姓名' }]}>
+                  <Input placeholder="用户名" style={{ width: '200px' }} />
+                </Form.Item>
+              </Col>
+              <Col span={8}>
+                <Form.Item name="gender" label="性别">
+                  <Radio.Group>
+                    <Radio value={0}>男</Radio>
+                    <Radio value={1}>女</Radio>
+                    <Radio value={2}>其他</Radio>
+                  </Radio.Group>
+                </Form.Item>
+              </Col>
+              <Col span={8}>
+                <Form.Item name="age" label="年龄">
+                  <Input placeholder="年龄" type="number" style={{ width: '200px' }} />
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row>
+              <Col span={8}>
+                <Form.Item name="birth" label="出生日期">
+                  <DatePicker style={{ width: '200px' }} placeholder="" />
+                </Form.Item>
+              </Col>
+              <Col span={8}>
+                <Form.Item name="phone" label="手机号">
+                  <Input placeholder="手机号" type="number" style={{ width: '200px' }} />
+                </Form.Item>
+              </Col>
+              <Col span={8}>
+                <Form.Item name="type" label="用户类型" rules={[{ required: true, message: '请选择用户类型' }]}>
+                  <Select
+                    style={{ width: '200px' }}
+                    onChange={e => {
+                      changeType(e)
+                    }}
+                  >
+                    <Select.Option value={0}>患者</Select.Option>
+                    <Select.Option value={1}>医生</Select.Option>
+                    <Select.Option value={2}>家属</Select.Option>
+                    <Select.Option value={3}>其他</Select.Option>
+                  </Select>
+                </Form.Item>
+              </Col>
+            </Row>
+            {userType === userEnum.PATIENT && (
+              <Row>
+                <Col span={8}>
+                  <Form.Item name="birth" label="出生日期">
+                    <DatePicker style={{ width: '200px' }} placeholder="" />
+                  </Form.Item>
+                </Col>
+                <Col span={8}>
+                  <Form.Item name="phone" label="手机号">
+                    <Input placeholder="手机号" type="number" style={{ width: '200px' }} />
+                  </Form.Item>
+                </Col>
+                <Col span={8}>
+                  <Form.Item name="type" label="用户类型" rules={[{ required: true, message: '请选择用户类型' }]}>
+                    <Select
+                      style={{ width: '200px' }}
+                      onChange={e => {
+                        changeType(e)
+                      }}
+                    >
+                      <Select.Option value={0}>患者</Select.Option>
+                      <Select.Option value={1}>医生</Select.Option>
+                      <Select.Option value={2}>家属</Select.Option>
+                      <Select.Option value={3}>其他</Select.Option>
+                    </Select>
+                  </Form.Item>
+                </Col>
+              </Row>
+            )}
+
+            {userType === userEnum.DOCTOR && (
+              <>
+                <Row>
+                  <Col span={8}>
+                    <Form.Item name={['doctor', 'hospital']} label="医生所属医院">
+                      <Input placeholder="医生所属医院" style={{ width: '200px' }} />
+                    </Form.Item>
+                  </Col>
+                  <Col span={8}>
+                    <Form.Item name={['doctor', 'disease']} label="擅长病种">
+                      <Input placeholder="擅长病种" style={{ width: '200px' }} />
+                    </Form.Item>
+                  </Col>
+                  <Col span={8}>
+                    <Form.Item name={['doctor', 'type']} label="医生类型">
+                      <Select style={{ width: '200px' }}>
+                        <Select.Option value={doctorEnum.CLINICAL}>临床医生</Select.Option>
+                        <Select.Option value={doctorEnum.THERAPEUTIST}>治疗师</Select.Option>
+                        <Select.Option value={doctorEnum.OTHER}>其他</Select.Option>
+                        <Select.Option value={doctorEnum.PT}>物理治疗师</Select.Option>
+                        <Select.Option value={doctorEnum.OT}>作业治疗师</Select.Option>
+                      </Select>
+                    </Form.Item>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col span={16}>
+                    <Form.Item name={['doctor', 'profile']} label="个人简介" {...formItemLayoutItem}>
+                      <Input.TextArea placeholder="个人简介" style={{ width: '400px' }} />
+                    </Form.Item>
+                  </Col>
+                </Row>
+              </>
+            )}
+
+            <Form.Item className="regist-btn">
+              <Button htmlType="submit" type="primary" style={{ width: '100px' }}>
+                注册
+              </Button>
+            </Form.Item>
+          </Form>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default RegistPage
