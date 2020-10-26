@@ -1,12 +1,13 @@
 import React, { FC, useState } from 'react'
-import { Button, Col, DatePicker, Divider, Form, Input, Radio, Row, Select } from 'antd'
+import { Button, Col, DatePicker, Divider, Form, Input, Radio, Row, Select, Space } from 'antd'
 import './index.less'
 import { useNavigate } from 'react-router-dom'
 import { apiRegist } from '~/api/user.api'
 import { userEnum } from '~/interface/user/login'
 import UserEnum from '../../../../const/index'
+import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons'
 
-const { doctorEnum } = UserEnum
+const { doctorEnum, familyEnum } = UserEnum
 
 const formItemLayout = {
   labelCol: { span: 8 },
@@ -25,6 +26,7 @@ const RegistPage: FC = () => {
   const onFinished = async (form: any) => {
     const params = { ...form, birth: form.birth?.valueOf() }
     console.log('a', params)
+    return
     const res = await apiRegist(params)
   }
 
@@ -124,31 +126,79 @@ const RegistPage: FC = () => {
             </Row>
             {userType === userEnum.PATIENT && (
               <Row>
-                <Col span={8}>
-                  <Form.Item name="birth" label="出生日期">
-                    <DatePicker style={{ width: '200px' }} placeholder="" />
-                  </Form.Item>
-                </Col>
-                <Col span={8}>
-                  <Form.Item name="phone" label="手机号">
-                    <Input placeholder="手机号" type="number" style={{ width: '200px' }} />
-                  </Form.Item>
-                </Col>
-                <Col span={8}>
-                  <Form.Item name="type" label="用户类型" rules={[{ required: true, message: '请选择用户类型' }]}>
-                    <Select
-                      style={{ width: '200px' }}
-                      onChange={e => {
-                        changeType(e)
-                      }}
-                    >
-                      <Select.Option value={0}>患者</Select.Option>
-                      <Select.Option value={1}>医生</Select.Option>
-                      <Select.Option value={2}>家属</Select.Option>
-                      <Select.Option value={3}>其他</Select.Option>
-                    </Select>
-                  </Form.Item>
-                </Col>
+                <Divider style={{ marginTop: 0 }} />
+                <Form.List name="family">
+                  {(fields, { add, remove }) => (
+                    <>
+                      {fields.map(field => (
+                        <React.Fragment key={field.key}>
+                          <Col span={8}>
+                            <Form.Item
+                              {...field}
+                              label="家属姓名"
+                              name={[field.name, 'name']}
+                              fieldKey={[field.fieldKey, 'name']}
+                              rules={[{ required: true, message: '家属姓名必填' }]}
+                            >
+                              <Input style={{ width: '200px' }} />
+                            </Form.Item>
+                          </Col>
+                          <Col span={8}>
+                            <Form.Item
+                              {...field}
+                              label="电话"
+                              name={[field.name, 'phone']}
+                              fieldKey={[field.fieldKey, 'phone']}
+                              rules={[{ required: true, message: '电话必填' }]}
+                            >
+                              <Input type="number" style={{ width: '200px' }} />
+                            </Form.Item>
+                          </Col>
+                          <Col span={8} className="relation-item">
+                            <Form.Item
+                              noStyle
+                              shouldUpdate={(prevValues, curValues) =>
+                                prevValues.type !== curValues.type || prevValues.family !== curValues.family
+                              }
+                            >
+                              {() => (
+                                <Form.Item
+                                  {...field}
+                                  label="关系"
+                                  name={[field.name, 'relation']}
+                                  fieldKey={[field.fieldKey, 'relation']}
+                                  rules={[{ required: true, message: 'Missing sight' }]}
+                                >
+                                  <Select style={{ width: '200px', marginRight: 5 }}>
+                                    <Select.Option value={familyEnum.FATHER}>父亲</Select.Option>
+                                    <Select.Option value={familyEnum.MOTHER}>母亲</Select.Option>
+                                    <Select.Option value={familyEnum.SON}>儿子</Select.Option>
+                                    <Select.Option value={familyEnum.DAUGHTER}>女儿</Select.Option>
+                                    <Select.Option value={familyEnum.SPOUSE}>配偶</Select.Option>
+                                    <Select.Option value={familyEnum.OTHER}>其他</Select.Option>
+                                  </Select>
+                                </Form.Item>
+                              )}
+                            </Form.Item>
+                            <MinusCircleOutlined onClick={() => remove(field.name)} className="delete-icon" />
+                          </Col>
+                        </React.Fragment>
+                      ))}
+
+                      <Form.Item className="family-btn">
+                        <Button
+                          type="dashed"
+                          onClick={() => add()}
+                          block
+                          icon={<PlusOutlined />}
+                          style={{ width: 133 }}
+                        >
+                          新增家属
+                        </Button>
+                      </Form.Item>
+                    </>
+                  )}
+                </Form.List>
               </Row>
             )}
 
@@ -188,7 +238,7 @@ const RegistPage: FC = () => {
             )}
 
             <Form.Item className="regist-btn">
-              <Button htmlType="submit" type="primary" style={{ width: '100px' }}>
+              <Button htmlType="submit" type="primary" style={{ width: '133px' }}>
                 注册
               </Button>
             </Form.Item>
