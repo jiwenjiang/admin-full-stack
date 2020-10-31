@@ -5,9 +5,10 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import { loginAsync } from '~/actions/user.action'
 import { LoginParams } from '~/interface/user/login'
+import { apiLogin } from '~/api/user.api'
 
 const initialValues: LoginParams = {
-  email: '',
+  userName: '',
   password: ''
   // remember: true
 }
@@ -15,11 +16,11 @@ const initialValues: LoginParams = {
 const LoginForm: FC = () => {
   const navigate = useNavigate()
   const location = useLocation()
-  const dispatch = useDispatch()
 
   const onFinished = async (form: any) => {
-    const res = dispatch(await loginAsync(form))
-    if (!!res) {
+    const res = await apiLogin(form)
+    if (res.status === 200) {
+      sessionStorage.token = res.data.token
       const from = (location.state as any)?.from || { pathname: '/dashboard' }
       navigate(from)
     }
@@ -29,7 +30,7 @@ const LoginForm: FC = () => {
     <div className="login-page">
       <Form onFinish={onFinished} className="login-page-form" initialValues={initialValues}>
         <h2>REACT ANTD ADMIN</h2>
-        <Form.Item name="email" rules={[{ required: true, message: '请输入用户名！' }]}>
+        <Form.Item name="userName" rules={[{ required: true, message: '请输入用户名！' }]}>
           <Input placeholder="用户名" />
         </Form.Item>
         <Form.Item name="password" rules={[{ required: true, message: '请输入密码！' }]}>

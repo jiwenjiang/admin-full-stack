@@ -40,11 +40,9 @@ router.post(
       const hashedPassword = await bcrypt.hash(password, 12);
 
       const user = new User({ ...req.body, password: hashedPassword });
-      console.log("us", user, req.body);
       await user.save();
       if (req.body.type === userTypeEnum.DOCTOR) {
         const doctor = new Doctor({ userId: user._id, ...req.body.doctor });
-        console.log("dc", doctor);
         await doctor.save();
       }
 
@@ -55,14 +53,10 @@ router.post(
   }
 );
 
-// /api/auth/signin
 router.post(
-  "/signin",
+  "/login",
 
-  [
-    check("email", "Enter valid email").normalizeEmail().isEmail(),
-    check("password", "Enter password").exists(),
-  ],
+  [check("password", "Enter password").exists()],
 
   async (req, res) => {
     try {
@@ -75,25 +69,31 @@ router.post(
         });
       }
 
-      const { email, password } = req.body;
+      const { userName, password } = req.body;
 
-      const user = await User.findOne({ email });
+      const user = await User.findOne({ userName });
 
       if (!user) {
-        return res.status(400).json({ message: "User not found" });
+        return res
+          .status(200)
+          .json({ message: "用户名或密码错误", status: 400, data: null });
       }
 
       const isMatch = await bcrypt.compare(password, user.password);
 
       if (!isMatch) {
-        return res.status(400).json({ message: "Incorrect password" });
+        return res
+          .status(200)
+          .json({ message: "用户名或密码错误", status: 400, data: null });
       }
 
       const token = jwt.sign({ userId: user.id }, config.get("jwtSecret"), {
-        expiresIn: "1h",
+        expiresIn: "3h",
       });
 
-      res.json({ data: { token, userId: user.id }, code: 200, success: true });
+      res
+        .status(200)
+        .json({ message: "登录成功", status: 200, data: { token } });
     } catch (e) {
       res.status(500).json({ message: "Something went wrong " });
     }

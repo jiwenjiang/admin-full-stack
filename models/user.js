@@ -30,6 +30,7 @@ const schema = new Schema({
       relation: { type: Number, enum: Object.values(familyEnum) },
     },
   ],
+  createdAt: { type: Date, default: Date.now },
 });
 
 module.exports = model("user", schema);

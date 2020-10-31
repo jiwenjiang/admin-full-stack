@@ -22,6 +22,7 @@ app.use(express.json({ extended: true }));
 app.use("/api/auth", require("./routes/auth"));
 app.use("/api/todo", require("./routes/todo"));
 app.use("/api/post", require("./routes/post"));
+app.use("/api/user", require("./routes/user"));
 
 mongoose.connection.on("connected", function () {
   console.log("Mongoose connection open2 " + config.get("mongoUrl"));

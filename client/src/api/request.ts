@@ -1,10 +1,16 @@
 import axios, { AxiosRequestConfig } from 'axios'
 import { message as $message } from 'antd'
 
-axios.defaults.timeout = 6000
+const instance = axios.create({
+  headers: {
+    'content-type': 'application/json;charset=UTF-8'
+  },
+  timeout: 6000
+})
 
-axios.interceptors.request.use(
+instance.interceptors.request.use(
   config => {
+    config.headers['authorization'] = sessionStorage.token
     return config
   },
   error => {
@@ -12,12 +18,12 @@ axios.interceptors.request.use(
   }
 )
 
-axios.interceptors.response.use(
-  ({ data, config }) => {
-    if (data?.message && config.method !== 'get') {
-      data.status === 200 ? $message.success(data.message) : $message.error(data.message)
+instance.interceptors.response.use(
+  res => {
+    if (res?.data?.message && res?.config.method !== 'get') {
+      res.data?.status === 200 ? $message.success(res.data.message) : $message.error(res.data.message)
     }
-    return config?.data
+    return res?.data
   },
   error => {
     let errorMessage = error.message || '系统异常'
@@ -34,7 +40,7 @@ axios.interceptors.response.use(
 )
 
 export type Response<T = any> = {
-  status: boolean
+  status: number
   message: string
   data: T
 }
@@ -59,10 +65,9 @@ export const request = <T = any>(
   const prefix = 'http://localhost:5000/api/'
   url = prefix + url
   if (method === 'post') {
-    console.log('url', url)
-    return axios.post(url, data, config)
+    return instance.post(url, data, config)
   } else {
-    return axios.get(url, {
+    return instance.get(url, {
       params: data,
       ...config
     })

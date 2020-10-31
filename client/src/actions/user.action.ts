@@ -35,19 +35,17 @@ export type UserActions = SetUserItem
 
 export const loginAsync = (payload: LoginParams): ThunkAction<Promise<boolean>, AppState, null, SetUserItem> => {
   return async dispatch => {
-    const { data, status } = await apiLogin(payload)
-    console.log('payload', payload, status)
-    debugger
-
-    if (status) {
-      dispatch(
-        setUserItem({
-          logged: true,
-          username: data.username
-        })
-      )
-      return true
-    }
+    const res = await apiLogin(payload)
+    console.log('dd', res)
+    // if (status === 200) {
+    //   dispatch(
+    //     setUserItem({
+    //       logged: true,
+    //       username: data.username
+    //     })
+    //   )
+    //   return true
+    // }
     return false
   }
 }

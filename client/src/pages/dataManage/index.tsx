@@ -1,7 +1,5 @@
-import { DatabaseTwoTone, UserOutlined } from '@ant-design/icons'
 import { Row, Col, Progress, Tag, Table, Form, Input, Button } from 'antd'
 import React, { FC, useState, useEffect } from 'react'
-import { PieChart, Pie, Tooltip, Cell } from 'recharts'
 import { Link } from 'react-router-dom'
 import './index.less'
 
