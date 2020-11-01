@@ -1,8 +1,8 @@
-import React, { FC, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { Button, Col, DatePicker, Divider, Form, Input, Radio, Row, Select, Space } from 'antd'
 import './index.less'
-import { useNavigate } from 'react-router-dom'
-import { apiRegist } from '~/api/user.api'
+import { useNavigate, useLocation } from 'react-router-dom'
+import { apiGetUserDetail, apiRegist } from '~/api/user.api'
 import { userEnum } from '~/interface/user/login'
 import UserEnum from '../../../../const/index'
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons'
@@ -21,16 +21,28 @@ const formItemLayoutItem = {
 
 const RegistPage: FC = () => {
   const navigate = useNavigate()
+
+  const search = useLocation().search
+  const entry = new URLSearchParams(search).get('entry')
+  const edit = new URLSearchParams(search).get('edit')
   const [userType, setUserType] = useState<userEnum | null>(null)
 
   const onFinished = async (form: any) => {
     const params = { ...form, birth: form.birth?.valueOf() }
     const res = await apiRegist(params)
-    console.log('a', params, res)
+    res.status === 200 && navigate({ pathname: entry === 'user' || edit ? '/userManage' : '/login' })
   }
 
-  const changeType = (e: any) => {
-    console.log('e', e)
+  useEffect(() => {
+    if (edit) {
+      ;(async () => {
+        const res = await apiGetUserDetail(edit)
+        console.log(res)
+      })()
+    }
+  }, [])
+
+  const changeType = (e: number) => {
     setUserType(e)
   }
 
@@ -111,7 +123,7 @@ const RegistPage: FC = () => {
                 <Form.Item name="type" label="用户类型" rules={[{ required: true, message: '请选择用户类型' }]}>
                   <Select
                     style={{ width: '200px' }}
-                    onChange={e => {
+                    onChange={(e: number) => {
                       changeType(e)
                     }}
                   >

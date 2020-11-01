@@ -47,4 +47,14 @@ router.get("/", auth, async (req, res) => {
   }
 });
 
+router.get("/:id", auth, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const data = await User.findById(id);
+    res.status(200).json({ message: "获取用户详情", status: 200, data });
+  } catch (e) {
+    res.status(500).json({ message: "Something went wrong" });
+  }
+});
+
 module.exports = router;

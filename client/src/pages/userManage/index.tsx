@@ -1,6 +1,6 @@
-import { Row, Col, Table, Form, Input, Button } from 'antd'
+import { Row, Col, Table, Form, Input, Button, Modal } from 'antd'
 import React, { FC, useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { apiGetUserList } from '~/api/user.api'
 import './index.less'
 import UserEnum from '../../../../const/index'
@@ -49,7 +49,12 @@ const columns = [
     dataIndex: 'oprate',
     key: 'oprate',
     render(_: any, record: any) {
-      return <Link to={`/dataDetail/${record.key}`}>详情</Link>
+      return (
+        <>
+          <Link to={`/regist?edit=${record._id}`}>编辑</Link>
+          <Link to={`/dataDetail/${record.key}`}>详情</Link>
+        </>
+      )
     }
   }
 ]
@@ -61,6 +66,7 @@ const initParams = {
 }
 
 const DashBoardPage: FC = () => {
+  const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
   const [data, setData] = useState([])
   const [params, setParams] = useState(initParams)
@@ -89,37 +95,46 @@ const DashBoardPage: FC = () => {
   }
 
   return (
-    <div className="container">
-      <Row>
-        <div className="box-card">
-          <Form name="basic" layout="inline" onFinish={onFinish}>
-            <Form.Item label="用户名" name="userName">
-              <Input style={{ width: 200 }} />
-            </Form.Item>
-            <Form.Item>
-              <Button type="primary" htmlType="submit">
-                搜索
-              </Button>
-            </Form.Item>
-          </Form>
-        </div>
-      </Row>
-      <Row className="table-box">
-        <Col span={24}>
-          <div className="table-card-panel">
-            <Table
-              columns={columns}
-              size="small"
-              loading={loading}
-              pagination={{ total, ...params }}
-              dataSource={data}
-              rowKey={row => row._id}
-              onChange={handleTableChange}
-            />
+    <>
+      <div className="container">
+        <Row>
+          <div className="box-card">
+            <Form name="basic" layout="inline" onFinish={onFinish}>
+              <Form.Item label="用户名" name="userName">
+                <Input style={{ width: 200 }} />
+              </Form.Item>
+              <Form.Item>
+                <Button type="primary" htmlType="submit">
+                  搜索
+                </Button>
+                <Button
+                  type="primary"
+                  style={{ marginLeft: 10 }}
+                  onClick={() => navigate({ pathname: '/regist?entry=user&edit=false' })}
+                >
+                  新增用户
+                </Button>
+              </Form.Item>
+            </Form>
           </div>
-        </Col>
-      </Row>
-    </div>
+        </Row>
+        <Row className="table-box">
+          <Col span={24}>
+            <div className="table-card-panel">
+              <Table
+                columns={columns}
+                size="small"
+                loading={loading}
+                pagination={{ total, ...params }}
+                dataSource={data}
+                rowKey={row => row._id}
+                onChange={handleTableChange}
+              />
+            </div>
+          </Col>
+        </Row>
+      </div>
+    </>
   )
 }
 

@@ -12,3 +12,6 @@ export const apiRegist = (data: any) => request('post', 'auth/regist', data)
 
 /** get */
 export const apiGetUserList = (data?: any) => request('get', 'user', data)
+
+/** get */
+export const apiGetUserDetail = (id: string) => request('get', `user/${id}`)
