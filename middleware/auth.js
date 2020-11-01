@@ -7,12 +7,12 @@ module.exports = (req, res, next) => {
   }
 
   try {
-    const token = req.headers.authorization.split(" ")[1];
+    const token = req.headers.authorization;
 
     if (!token) {
       return res
         .status(200)
-        .json({ status: 401, data: null, message: "No authorization" });
+        .json({ status: 401, data: null, message: "无权限，请重新登录" });
     }
 
     const decoded = jwt.verify(token, config.get("jwtSecret"));
@@ -21,6 +21,8 @@ module.exports = (req, res, next) => {
 
     next();
   } catch (e) {
-    res.status(401).json({ message: "No authorization" });
+    res
+      .status(200)
+      .json({ status: 401, data: null, message: "无权限，请重新登录" });
   }
 };

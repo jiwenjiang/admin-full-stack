@@ -2,6 +2,7 @@ const { Router } = require("express");
 const User = require("../models/user");
 const auth = require("../middleware/auth");
 const router = Router();
+const { queryObj } = require("../utils");
 
 router.post("/create", auth, async (req, res) => {
   try {
@@ -25,11 +26,20 @@ router.post("/create", auth, async (req, res) => {
   }
 });
 
-router.get("/", async (req, res) => {
+router.get("/", auth, async (req, res) => {
   try {
-    const data = await User.find().sort({
-      createdAt: -1,
-    });
+    const { current = 1, pageSize = 10 } = req.query;
+    const pageParams = {
+      page: current,
+      limit: pageSize,
+      sort: {
+        createdAt: -1,
+      },
+    };
+    const data = await User.paginate(
+      queryObj(["userName"], req.query),
+      pageParams
+    );
 
     res.status(200).json({ message: "获取用户列表", status: 200, data });
   } catch (e) {

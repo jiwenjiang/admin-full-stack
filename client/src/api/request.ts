@@ -20,6 +20,9 @@ instance.interceptors.request.use(
 
 instance.interceptors.response.use(
   res => {
+    if (res?.data?.status === 401) {
+      $message.error(res.data.message)
+    }
     if (res?.data?.message && res?.config.method !== 'get') {
       res.data?.status === 200 ? $message.success(res.data.message) : $message.error(res.data.message)
     }

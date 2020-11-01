@@ -4,11 +4,24 @@ const genderEnum = {
   OTHER: 2,
 };
 
+const genderLabel = {
+  [genderEnum.MALE]: "男",
+  [genderEnum.FEMALE]: "女",
+  [genderEnum.OTHER]: "其他",
+};
+
 const userTypeEnum = {
   PATIENT: 0,
   DOCTOR: 1,
   FAMILY: 2,
   OTHER: 3,
+};
+
+const userTypeLabel = {
+  [userTypeEnum.PATIENT]: "患者",
+  [userTypeEnum.DOCTOR]: "医生",
+  [userTypeEnum.FAMILY]: "家属",
+  [userTypeEnum.OTHER]: "其他",
 };
 
 const doctorEnum = {
@@ -28,4 +41,11 @@ const familyEnum = {
   OTHER: 5,
 };
 
-module.exports = { genderEnum, userTypeEnum, doctorEnum, familyEnum };
+module.exports = {
+  genderEnum,
+  genderLabel,
+  userTypeEnum,
+  userTypeLabel,
+  doctorEnum,
+  familyEnum,
+};

@@ -1,47 +1,13 @@
-import { Row, Col, Progress, Tag, Table, Form, Input, Button } from 'antd'
+import { Row, Col, Table, Form, Input, Button } from 'antd'
 import React, { FC, useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { apiGetUserList } from '~/api/user.api'
 import './index.less'
+import UserEnum from '../../../../const/index'
+import moment from 'moment'
+import { TablePaginationConfig } from 'antd/lib/table'
 
-const data = [
-  { name: '记录数量', value: 4544 },
-  { name: '报告数量', value: 3321 },
-  { name: '用户数量', value: 3113 }
-]
-
-const tableData = [
-  {
-    key: '1',
-    name: 'John Brown',
-    age: 32,
-    address: 'New York No. 1 Lake Park'
-  },
-  {
-    key: '2',
-    name: 'Jim Green',
-    age: 42,
-    address: 'London No. 1 Lake Park'
-  },
-  {
-    key: '3',
-    name: 'Joe Black',
-    age: 32,
-    address: 'Sidney No. 1 Lake Park'
-  },
-  {
-    key: '4',
-    name: 'Joe Black',
-    age: 32,
-    address: 'Sidney No. 1 Lake Park'
-  },
-  {
-    key: '5',
-    name: 'Joe Black',
-    age: 32,
-    address: 'Sidney No. 1 Lake Park'
-  }
-]
+const { genderLabel, userTypeLabel } = UserEnum
 
 const columns = [
   {
@@ -58,7 +24,8 @@ const columns = [
   {
     title: '性别',
     dataIndex: 'gender',
-    key: 'gender'
+    key: 'gender',
+    render: (text: number) => <span>{genderLabel[text]}</span>
   },
   {
     title: '手机号',
@@ -68,12 +35,14 @@ const columns = [
   {
     title: '创建日期',
     dataIndex: 'createdAt',
-    key: 'createdAt'
+    key: 'createdAt',
+    render: (text: number) => <span>{moment(text).format('YYYY-MM-DD HH:mm:ss')}</span>
   },
   {
     title: '角色',
     dataIndex: 'type',
-    key: 'type'
+    key: 'type',
+    render: (text: number) => <span>{userTypeLabel[text]}</span>
   },
   {
     title: '操作',
@@ -85,25 +54,46 @@ const columns = [
   }
 ]
 
+const initParams = {
+  current: 1,
+  pageSize: 10,
+  userName: ''
+}
+
 const DashBoardPage: FC = () => {
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
+  const [data, setData] = useState([])
+  const [params, setParams] = useState(initParams)
+  const [total, setTotal] = useState(0)
+
+  const getList = async (params: typeof initParams) => {
+    setLoading(true)
+    const res = await apiGetUserList(params)
+    setLoading(false)
+    setData(res.data.docs)
+    setTotal(res.data.totalDocs)
+    setParams({ ...params, current: res.data.page })
+  }
 
   useEffect(() => {
-    ;(async () => {
-      // apiGetUserList()
-    })()
+    getList(initParams)
   }, [])
 
   const onFinish = (values: any) => {
-    console.log('Success:', values)
+    setParams({ ...params, ...values })
+    getList({ ...params, ...values })
+  }
+
+  const handleTableChange = (pagination: TablePaginationConfig) => {
+    getList({ ...params, current: pagination.current as number })
   }
 
   return (
     <div className="container">
       <Row>
         <div className="box-card">
-          <Form name="basic" initialValues={{ remember: true }} layout="inline" onFinish={onFinish}>
-            <Form.Item label="姓名" name="name">
+          <Form name="basic" layout="inline" onFinish={onFinish}>
+            <Form.Item label="用户名" name="userName">
               <Input style={{ width: 200 }} />
             </Form.Item>
             <Form.Item>
@@ -121,8 +111,10 @@ const DashBoardPage: FC = () => {
               columns={columns}
               size="small"
               loading={loading}
-              pagination={{ position: ['bottomRight'] }}
-              dataSource={tableData}
+              pagination={{ total, ...params }}
+              dataSource={data}
+              rowKey={row => row._id}
+              onChange={handleTableChange}
             />
           </div>
         </Col>

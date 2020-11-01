@@ -25,9 +25,8 @@ const RegistPage: FC = () => {
 
   const onFinished = async (form: any) => {
     const params = { ...form, birth: form.birth?.valueOf() }
-    console.log('a', params)
-    return
     const res = await apiRegist(params)
+    console.log('a', params, res)
   }
 
   const changeType = (e: any) => {
