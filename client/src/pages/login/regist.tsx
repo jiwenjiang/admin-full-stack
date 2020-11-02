@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC, useEffect, useRef, useState } from 'react'
 import { Button, Col, DatePicker, Divider, Form, Input, Radio, Row, Select, Space } from 'antd'
 import './index.less'
 import { useNavigate, useLocation } from 'react-router-dom'
@@ -6,6 +6,7 @@ import { apiGetUserDetail, apiRegist } from '~/api/user.api'
 import { userEnum } from '~/interface/user/login'
 import UserEnum from '../../../../const/index'
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons'
+import moment from 'moment'
 
 const { doctorEnum, familyEnum } = UserEnum
 
@@ -21,27 +22,36 @@ const formItemLayoutItem = {
 
 const RegistPage: FC = () => {
   const navigate = useNavigate()
-
   const search = useLocation().search
-  const entry = new URLSearchParams(search).get('entry')
   const edit = new URLSearchParams(search).get('edit')
   const [userType, setUserType] = useState<userEnum | null>(null)
+  const [formData, setFormData] = useState<any>(null)
+  const [form] = Form.useForm()
 
   const onFinished = async (form: any) => {
     const params = { ...form, birth: form.birth?.valueOf() }
     const res = await apiRegist(params)
-    res.status === 200 && navigate({ pathname: entry === 'user' || edit ? '/userManage' : '/login' })
+    res.status === 200 && navigate({ pathname: edit ? '/userManage' : '/login' })
   }
 
   useEffect(() => {
-    if (edit) {
+    if (edit && edit !== 'false') {
       ;(async () => {
         const res = await apiGetUserDetail(edit)
-        console.log(res)
+        if (res.status === 200) {
+          const { phone, userName, realName, type, birth, gender, doctor, age } = res.data
+          setFormData({ age, phone, userName, realName, type, gender, doctor, birth: birth ? moment(birth) : moment() })
+          type && setUserType(type)
+        }
       })()
     }
   }, [])
 
+  useEffect(() => {
+    if (formData) {
+      form.setFieldsValue(formData)
+    }
+  }, [formData])
   const changeType = (e: number) => {
     setUserType(e)
   }
@@ -55,7 +65,14 @@ const RegistPage: FC = () => {
       </div>
       <div className="body">
         <div className="regist-form">
-          <Form {...formItemLayout} onFinish={onFinished} className="regist-page-form" prefix=":" layout="horizontal">
+          <Form
+            form={form}
+            {...formItemLayout}
+            onFinish={onFinished}
+            className="regist-page-form"
+            prefix=":"
+            layout="horizontal"
+          >
             <Row>
               <Col span={8}>
                 <Form.Item name="userName" label="用户名" rules={[{ required: true, message: '请输入用户名' }]}>

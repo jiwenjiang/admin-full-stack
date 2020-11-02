@@ -110,7 +110,7 @@ const DashBoardPage: FC = () => {
                 <Button
                   type="primary"
                   style={{ marginLeft: 10 }}
-                  onClick={() => navigate({ pathname: '/regist?entry=user&edit=false' })}
+                  onClick={() => navigate({ pathname: '/regist?edit=false' })}
                 >
                   新增用户
                 </Button>

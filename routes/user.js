@@ -1,8 +1,10 @@
 const { Router } = require("express");
 const User = require("../models/user");
+const Doctor = require("../models/doctor");
 const auth = require("../middleware/auth");
 const router = Router();
 const { queryObj } = require("../utils");
+const { userTypeEnum } = require("../const");
 
 router.post("/create", auth, async (req, res) => {
   try {
@@ -50,10 +52,14 @@ router.get("/", auth, async (req, res) => {
 router.get("/:id", auth, async (req, res) => {
   try {
     const { id } = req.params;
-    const data = await User.findById(id);
+    const data = await User.findById(id).exec();
+    if (data.type === userTypeEnum.DOCTOR) {
+      const docData = await Doctor.findOne({ userId: data._id }).exec();
+      data.set("doctor", docData.toJSON(), { strict: false });
+    }
     res.status(200).json({ message: "获取用户详情", status: 200, data });
   } catch (e) {
-    res.status(500).json({ message: "Something went wrong" });
+    res.status(500).json({ message: e });
   }
 });
 
