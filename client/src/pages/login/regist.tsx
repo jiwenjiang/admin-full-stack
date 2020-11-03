@@ -2,13 +2,12 @@ import React, { FC, useEffect, useRef, useState } from 'react'
 import { Button, Col, DatePicker, Divider, Form, Input, Radio, Row, Select, Space } from 'antd'
 import './index.less'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { apiGetUserDetail, apiRegist } from '~/api/user.api'
-import { userEnum } from '~/interface/user/login'
+import { apiGetUserDetail, apiRegist, updateUser } from '~/api/user.api'
 import UserEnum from '../../../../const/index'
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons'
 import moment from 'moment'
 
-const { doctorEnum, familyEnum } = UserEnum
+const { doctorEnum, familyEnum, userTypeEnum } = UserEnum
 
 const formItemLayout = {
   labelCol: { span: 8 },
@@ -24,13 +23,13 @@ const RegistPage: FC = () => {
   const navigate = useNavigate()
   const search = useLocation().search
   const edit = new URLSearchParams(search).get('edit')
-  const [userType, setUserType] = useState<userEnum | null>(null)
+  const [userType, setUserType] = useState<number | null>(null)
   const [formData, setFormData] = useState<any>(null)
   const [form] = Form.useForm()
 
   const onFinished = async (form: any) => {
     const params = { ...form, birth: form.birth?.valueOf() }
-    const res = await apiRegist(params)
+    const res = edit && edit !== 'false' ? await updateUser(edit, params) : await apiRegist(params)
     res.status === 200 && navigate({ pathname: edit ? '/userManage' : '/login' })
   }
 
@@ -39,9 +38,12 @@ const RegistPage: FC = () => {
       ;(async () => {
         const res = await apiGetUserDetail(edit)
         if (res.status === 200) {
-          const { phone, userName, realName, type, birth, gender, doctor, age } = res.data
-          setFormData({ age, phone, userName, realName, type, gender, doctor, birth: birth ? moment(birth) : moment() })
-          type && setUserType(type)
+          setFormData({
+            ...res.data,
+            birth: res.data.birth ? moment(res.data.birth) : moment(),
+            password: ''
+          })
+          setUserType(res.data.type)
         }
       })()
     }
@@ -53,7 +55,8 @@ const RegistPage: FC = () => {
     }
   }, [formData])
   const changeType = (e: number) => {
-    setUserType(e)
+    setUserType(e as number)
+    return e
   }
 
   return (
@@ -61,7 +64,7 @@ const RegistPage: FC = () => {
       <div className="head">
         <span>复数科技</span>
         <Divider type="vertical" />
-        <span>用户注册</span>
+        <span>用户{edit && edit !== 'false' ? '编辑' : '注册'}</span>
       </div>
       <div className="body">
         <div className="regist-form">
@@ -79,30 +82,35 @@ const RegistPage: FC = () => {
                   <Input placeholder="用户名" style={{ width: '200px' }} />
                 </Form.Item>
               </Col>
-              <Col span={8}>
-                <Form.Item name="password" label="密码" rules={[{ required: true, message: '请输入密码' }]}>
-                  <Input placeholder="密码" type="password" style={{ width: '200px' }} />
-                </Form.Item>
-              </Col>
-              <Col span={8}>
-                <Form.Item
-                  name="passwordAgain"
-                  label="确认密码"
-                  rules={[
-                    { required: true, message: '请确认密码' },
-                    ({ getFieldValue }) => ({
-                      validator(rule, value) {
-                        if (!value || getFieldValue('password') === value) {
-                          return Promise.resolve()
-                        }
-                        return Promise.reject('两次密码不一致')
-                      }
-                    })
-                  ]}
-                >
-                  <Input placeholder="确认密码" style={{ width: '200px' }} />
-                </Form.Item>
-              </Col>
+              {!edit ||
+                (edit === 'false' && (
+                  <>
+                    <Col span={8}>
+                      <Form.Item name="password" label="密码" rules={[{ required: true, message: '请输入密码' }]}>
+                        <Input placeholder="密码" type="password" style={{ width: '200px' }} />
+                      </Form.Item>
+                    </Col>
+                    <Col span={8}>
+                      <Form.Item
+                        name="passwordAgain"
+                        label="确认密码"
+                        rules={[
+                          { required: true, message: '请确认密码' },
+                          ({ getFieldValue }) => ({
+                            validator(rule, value) {
+                              if (!value || getFieldValue('password') === value) {
+                                return Promise.resolve()
+                              }
+                              return Promise.reject('两次密码不一致')
+                            }
+                          })
+                        ]}
+                      >
+                        <Input placeholder="确认密码" style={{ width: '200px' }} />
+                      </Form.Item>
+                    </Col>
+                  </>
+                ))}
             </Row>
             <Row>
               <Col span={8}>
@@ -152,7 +160,7 @@ const RegistPage: FC = () => {
                 </Form.Item>
               </Col>
             </Row>
-            {userType === userEnum.PATIENT && (
+            {userType === userTypeEnum.PATIENT && (
               <Row>
                 <Divider style={{ marginTop: 0 }} />
                 <Form.List name="family">
@@ -230,7 +238,7 @@ const RegistPage: FC = () => {
               </Row>
             )}
 
-            {userType === userEnum.DOCTOR && (
+            {userType === userTypeEnum.DOCTOR && (
               <>
                 <Row>
                   <Col span={8}>
@@ -267,7 +275,7 @@ const RegistPage: FC = () => {
 
             <Form.Item className="regist-btn">
               <Button htmlType="submit" type="primary" style={{ width: '133px' }}>
-                注册
+                {edit && edit !== 'false' ? '保存' : '注册'}
               </Button>
             </Form.Item>
           </Form>

@@ -15,3 +15,9 @@ export const apiGetUserList = (data?: any) => request('get', 'user', data)
 
 /** get */
 export const apiGetUserDetail = (id: string) => request('get', `user/${id}`)
+
+/* update */
+export const updateUser = (id: string, data: any) => request('put', `user/${id}`, data)
+
+/* delete */
+export const deleteUser = (id: string) => request('delete', `user/${id}`)

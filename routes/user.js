@@ -63,4 +63,27 @@ router.get("/:id", auth, async (req, res) => {
   }
 });
 
+router.put("/:id", auth, async (req, res) => {
+  try {
+    const { id } = req.params;
+    await User.findByIdAndUpdate(id, req.body);
+    if (req.body.type === userTypeEnum.DOCTOR) {
+      await Doctor.findByIdAndUpdate(id, req.body.doctor);
+    }
+    res.status(200).json({ message: "更新成功", status: 200, data: null });
+  } catch (e) {
+    res.status(500).json({ message: e });
+  }
+});
+
+router.delete("/:id", auth, async (req, res) => {
+  try {
+    const { id } = req.params;
+    await User.findByIdAndDelete(id);
+    res.status(200).json({ message: "删除成功", status: 200, data: null });
+  } catch (e) {
+    res.status(500).json({ message: e });
+  }
+});
+
 module.exports = router;

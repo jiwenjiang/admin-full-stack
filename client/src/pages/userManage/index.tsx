@@ -1,63 +1,13 @@
-import { Row, Col, Table, Form, Input, Button, Modal } from 'antd'
+import { Row, Col, Table, Form, Input, Button, Modal, Popconfirm } from 'antd'
 import React, { FC, useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { apiGetUserList } from '~/api/user.api'
+import { apiGetUserList, deleteUser } from '~/api/user.api'
 import './index.less'
 import UserEnum from '../../../../const/index'
 import moment from 'moment'
 import { TablePaginationConfig } from 'antd/lib/table'
 
 const { genderLabel, userTypeLabel } = UserEnum
-
-const columns = [
-  {
-    title: '用户名',
-    dataIndex: 'userName',
-    key: 'userName',
-    render: (text: React.ReactNode) => <a>{text}</a>
-  },
-  {
-    title: '姓名',
-    dataIndex: 'realName',
-    key: 'realName'
-  },
-  {
-    title: '性别',
-    dataIndex: 'gender',
-    key: 'gender',
-    render: (text: number) => <span>{genderLabel[text]}</span>
-  },
-  {
-    title: '手机号',
-    dataIndex: 'phone',
-    key: 'phone'
-  },
-  {
-    title: '创建日期',
-    dataIndex: 'createdAt',
-    key: 'createdAt',
-    render: (text: number) => <span>{moment(text).format('YYYY-MM-DD HH:mm:ss')}</span>
-  },
-  {
-    title: '角色',
-    dataIndex: 'type',
-    key: 'type',
-    render: (text: number) => <span>{userTypeLabel[text]}</span>
-  },
-  {
-    title: '操作',
-    dataIndex: 'oprate',
-    key: 'oprate',
-    render(_: any, record: any) {
-      return (
-        <>
-          <Link to={`/regist?edit=${record._id}`}>编辑</Link>
-          <Link to={`/dataDetail/${record.key}`}>详情</Link>
-        </>
-      )
-    }
-  }
-]
 
 const initParams = {
   current: 1,
@@ -80,6 +30,63 @@ const DashBoardPage: FC = () => {
     setTotal(res.data.totalDocs)
     setParams({ ...params, current: res.data.page })
   }
+
+  const confirm = async (id: string) => {
+    await deleteUser(id)
+    getList({ ...params, current: 1 })
+  }
+
+  const columns = [
+    {
+      title: '用户名',
+      dataIndex: 'userName',
+      key: 'userName',
+      render: (text: React.ReactNode) => <a>{text}</a>
+    },
+    {
+      title: '姓名',
+      dataIndex: 'realName',
+      key: 'realName'
+    },
+    {
+      title: '性别',
+      dataIndex: 'gender',
+      key: 'gender',
+      render: (text: number) => <span>{genderLabel[text]}</span>
+    },
+    {
+      title: '手机号',
+      dataIndex: 'phone',
+      key: 'phone'
+    },
+    {
+      title: '创建日期',
+      dataIndex: 'createdAt',
+      key: 'createdAt',
+      render: (text: number) => <span>{moment(text).format('YYYY-MM-DD HH:mm:ss')}</span>
+    },
+    {
+      title: '角色',
+      dataIndex: 'type',
+      key: 'type',
+      render: (text: number) => <span>{userTypeLabel[text]}</span>
+    },
+    {
+      title: '操作',
+      dataIndex: 'oprate',
+      key: 'oprate',
+      render(_: any, record: any) {
+        return (
+          <>
+            <Link to={`/regist?edit=${record._id}`}>编辑</Link>&emsp;
+            <Popconfirm title="确定删除该用户？" onConfirm={() => confirm(record._id)} okText="确定" cancelText="取消">
+              <a>删除</a>
+            </Popconfirm>
+          </>
+        )
+      }
+    }
+  ]
 
   useEffect(() => {
     getList(initParams)

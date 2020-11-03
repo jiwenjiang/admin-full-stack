@@ -48,7 +48,7 @@ export type Response<T = any> = {
   data: T
 }
 
-type Method = 'get' | 'post'
+type Method = ['post', 'get', 'put', 'delete', 'patch'][number]
 
 export type MyResponse<T = any> = Promise<Response<T>>
 
@@ -67,12 +67,12 @@ export const request = <T = any>(
   // const prefix = '/api'
   const prefix = 'http://localhost:5000/api/'
   url = prefix + url
-  if (method === 'post') {
-    return instance.post(url, data, config)
-  } else {
-    return instance.get(url, {
+  if (method === 'get' || method === 'delete') {
+    return instance[method](url, {
       params: data,
       ...config
     })
+  } else {
+    return instance[method](url, data, config)
   }
 }
