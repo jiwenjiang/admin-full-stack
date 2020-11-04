@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import { Button, Checkbox, Form, Input } from 'antd'
 import './index.less'
-import { useNavigate, useLocation } from 'react-router-dom'
+import { useNavigate, useLocation, Link } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import { loginAsync } from '~/actions/user.action'
 import { LoginParams } from '~/interface/user/login'
@@ -36,8 +36,8 @@ const LoginForm: FC = () => {
         <Form.Item name="password" rules={[{ required: true, message: '请输入密码！' }]}>
           <Input type="password" placeholder="密码" />
         </Form.Item>
-        <Form.Item name="remember" valuePropName="checked">
-          <Checkbox>记住用户</Checkbox>
+        <Form.Item name="remember" className="regist-btn">
+          <Link to={`/regist`}>用户注册</Link>
         </Form.Item>
         <Form.Item>
           <Button htmlType="submit" type="primary" className="login-page-form_button">

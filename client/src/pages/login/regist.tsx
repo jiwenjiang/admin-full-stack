@@ -82,35 +82,34 @@ const RegistPage: FC = () => {
                   <Input placeholder="用户名" style={{ width: '200px' }} />
                 </Form.Item>
               </Col>
-              {!edit ||
-                (edit === 'false' && (
-                  <>
-                    <Col span={8}>
-                      <Form.Item name="password" label="密码" rules={[{ required: true, message: '请输入密码' }]}>
-                        <Input placeholder="密码" type="password" style={{ width: '200px' }} />
-                      </Form.Item>
-                    </Col>
-                    <Col span={8}>
-                      <Form.Item
-                        name="passwordAgain"
-                        label="确认密码"
-                        rules={[
-                          { required: true, message: '请确认密码' },
-                          ({ getFieldValue }) => ({
-                            validator(rule, value) {
-                              if (!value || getFieldValue('password') === value) {
-                                return Promise.resolve()
-                              }
-                              return Promise.reject('两次密码不一致')
+              {(!edit || edit === 'false') && (
+                <>
+                  <Col span={8}>
+                    <Form.Item name="password" label="密码" rules={[{ required: true, message: '请输入密码' }]}>
+                      <Input placeholder="密码" type="password" style={{ width: '200px' }} />
+                    </Form.Item>
+                  </Col>
+                  <Col span={8}>
+                    <Form.Item
+                      name="passwordAgain"
+                      label="确认密码"
+                      rules={[
+                        { required: true, message: '请确认密码' },
+                        ({ getFieldValue }) => ({
+                          validator(rule, value) {
+                            if (!value || getFieldValue('password') === value) {
+                              return Promise.resolve()
                             }
-                          })
-                        ]}
-                      >
-                        <Input placeholder="确认密码" style={{ width: '200px' }} />
-                      </Form.Item>
-                    </Col>
-                  </>
-                ))}
+                            return Promise.reject('两次密码不一致')
+                          }
+                        })
+                      ]}
+                    >
+                      <Input placeholder="确认密码" style={{ width: '200px' }} />
+                    </Form.Item>
+                  </Col>
+                </>
+              )}
             </Row>
             <Row>
               <Col span={8}>

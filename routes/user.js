@@ -68,7 +68,7 @@ router.put("/:id", auth, async (req, res) => {
     const { id } = req.params;
     await User.findByIdAndUpdate(id, req.body);
     if (req.body.type === userTypeEnum.DOCTOR) {
-      await Doctor.findByIdAndUpdate(id, req.body.doctor);
+      await Doctor.findOneAndUpdate({ userId: id }, req.body.doctor);
     }
     res.status(200).json({ message: "更新成功", status: 200, data: null });
   } catch (e) {
