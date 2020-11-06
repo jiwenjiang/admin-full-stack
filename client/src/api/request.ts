@@ -65,7 +65,7 @@ export const request = <T = any>(
   config?: AxiosRequestConfig
 ): MyResponse<T> => {
   // const prefix = '/api'
-  const prefix = 'http://localhost:5000/api/'
+  const prefix = 'http://47.99.84.246:5000/api/'
   url = prefix + url
   if (method === 'get' || method === 'delete') {
     return instance[method](url, {
