@@ -248,7 +248,6 @@ type chartDataType<T> = {
 type ArrType = Array<BoneDataType> | null
 function BoneCharts({ data }: { data: ArrType }) {
   const handleData = (data: ArrType) => {
-    console.log('d', data)
     const arr: Array<chartDataType<number>> = []
     data?.forEach((v, i) => {
       const list = v.people[0].pose_keypoints_2d
